@@ -1,0 +1,141 @@
+Independent Events:- Independent events are those events whose occurrence is not dependent on any other event. For example, if we flip a coin in the air and get the outcome as Head, then again if we flip the coin but this time we get the outcome as Tail. In both cases, the occurrence of both events is independent of each other
+
+Mutually Exclusive Events:- Mutually exclusive events are those events that do not occur at the same time. For example, when a coin is tossed then the result will be either head or tail, but we cannot get both the results. Such events are also called disjoint events since they do not happen simultaneously. If A and B are mutually exclusive events then its probability is given by P(A Or B) or P (A U B)
+
+Probability of Disjoint (or) Mutually Exclusive Event = P ( A and B) =P(A⋂B)= 0
+				Mutually Exclusive Event = p(A or B) =P (A ∪ B) = P(A) + P(B)
+If the events A and B are not mutually exclusive: p(A or B) =P (A ∪ B) = P(A) + P(B) – P (A and B)=P(A) + P(B) –P(A⋂B)
+
+
+
+1) Marginal Probability:
+
+The probability of one event in the presence of all (or a subset of) outcomes of the other random variable is called the marginal probability or the marginal distribution. The marginal probability of one random variable in the presence of additional random variables is 
+referred to as the marginal probability distribution
+
+For example, the probability of X=A for all outcomes of Y.
+
+2) Joint Probability:
+
+The probability of two (or more) events is called the joint probability. The joint probability of two or more random variables is referred to as the joint probability distribution.
+
+P(A⋂B) =  P(A given B) * P(B)   or  p(A|B)*p(B)
+
+3) Conditional Probability:
+
+The probability of occurrence of any event A when another event B in relation to A has already occurred is known as conditional probability. It is depicted by P(A|B).
+
+
+P(A|B) = P(A∩B)/P(B)
+
+4)  Bayes Theorem: 
+
+Bayes’ theorem describes the probability of occurrence of an event related to any condition. It is also considered for the case of conditional probability.
+
+P(A|B) = P(A ⋂ B)/ P(B), where P(B) ≠ 0
+
+-------------------------------------------------------------------
+
+While descriptive statistics summarize the characteristics of a data set, inferential statistics help you come to conclusions and make predictions based on your data.
+
+Mode: the most frequent value.
+
+Median: the middle number in an ordered dataset.
+
+Mean: the sum of all values divided by the total number of values.
+
+--> In skewed distributions, the median is the best measure because it is unaffected by extreme outliers or non-symmetric distributions of scores. The mean and mode can vary in skewed distributions.
+
+
+
+percentile:- 
+Quartiles are a type of percentile. A percentile is a value with a certain percentage of the data falling below it
+
+
+Interquartile range (IQR):-
+IQR = Q3 − Q1
+
+outliers:-
+Outliers are extreme values that differ from most values in the dataset. You find outliers at the extreme ends of your dataset.
+
+probability density function (PDF):
+A probability density function (PDF) is a mathematical function that describes a continuous probability distribution.
+
+A probability mass function (PMF):
+A probability mass function (PMF) is a mathematical function that describes a discrete probability distribution.
+
+Cumulative Distribution Function (CDF):
+The Cumulative Distribution Function gives the probability that a random variable takes on a value less than or equal to a specified value.
+
+Percent Point Function(PPF):
+ PPF stands for Percent Point Function, also known as the inverse cumulative distribution function (inverse CDF). The Percent Point Function gives the value of a random variable for which the cumulative distribution function (CDF) is equal to a specified probability.
+
+
+normal distribution(Gaussian distribution):
+In a normal distribution, data is symmetrically distributed with no skew.
+
+-> properties of normal distributions:
+- The mean, median and mode are exactly the same.
+- The distribution is symmetric about the mean—half the values fall below the mean and half above the mean.
+- The distribution can be described by two values: the mean and the standard deviation.
+
+
+-> Empirical rule:-
+
+The empirical rule, or the 68-95-99.7 rule, tells you where most of your values lie in a normal distribution:
+
+- Around 68% of values are within 1 standard deviation from the mean.
+- Around 95% of values are within 2 standard deviations from the mean.
+- Around 99.7% of values are within 3 standard deviations from the mean.
+
+---------------------------------------------
+
+Z tests:-
+
+The z test is used to compare the means of two groups, or to compare the mean of a group to a set value. 
+ null hypothesis (h0):- typically assumes no difference between groups.
+
+
+
+
+ASSUMPTIONS of annova :-
+
+1) Date should be  gaussian - QQplot (visualize) , wilkin shapiro test, ks test
+2) Independant - Kolmogorov Smirnof TEST
+3) equal variance among group - Levene Test
+
+If these assumptions don't hold true use
+ --> KRUSKAL WALLIS TEST
+
+
+Type I Error:-  null hypothesis = true  but rejected incorrect binomial distributionly  -false positive
+Type II Error:-  null hypothesis is not rejected when it is actually false - false negative
+
+Increasing  α: If the significance level is increased, it makes it easier to reject the null hypothesis 
+reduces = Type II error
+increases = type I error
+
+Decreasing α: If the significance level is decreased, it makes it more stringent to reject the null hypothesis
+reduces = Type I error
+increases = type II error
+
+
+
+Min-Max Scaling:
+Suitable when the data has a clear, meaningful upper and lower bound, and outliers are not a significant concern.
+
+Standardization:
+Suitable when the data has a Gaussian distribution and when the algorithm does not assume a specific range for the features.
+
+
+
+ binomial distribution:- 
+
+ the binomial distribution is the discrete probability distribution that gives only two possible results in an experiment, either Success or Failure.
+ For example, if we toss a coin, there could be only two possible outcomes: heads or tails, and if any test is taken, then there could be only two results: pass or fail. This distribution is also called a binomial probability distribution.
+
+
+Poisson distribution:- 
+The Poisson distribution is a probability distribution that describes the number of events that occur within a fixed interval of time or space.
+
+	

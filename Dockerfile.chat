@@ -1,0 +1,10 @@
+FROM pytorch/pytorch:2.1.0-cuda11.8-cudnn8-runtime
+RUN apt-get update 
+RUN apt-get install build-essential -y
+COPY requirements_flask.txt requirements_flask.txt
+RUN CMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install llama-cpp-python
+RUN pip install -r requirements_flask.txt
+# RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip3 install transformers tqdm numpy scikit-learn scipy nltk sentencepiece
+RUN pip3 install --no-deps sentence-transformers
+WORKDIR "/data"

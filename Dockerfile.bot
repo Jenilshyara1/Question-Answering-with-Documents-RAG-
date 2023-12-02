@@ -1,0 +1,5 @@
+FROM python:3.11.6-slim-bullseye
+RUN apt-get update
+COPY requirements_streamlit.txt requirements_streamlit.txt
+RUN pip install -r requirements_streamlit.txt
+WORKDIR "/data"
