@@ -2,4 +2,7 @@ FROM python:3.11.6-slim-bullseye
 RUN apt-get update
 COPY requirements_streamlit.txt requirements_streamlit.txt
 RUN pip install -r requirements_streamlit.txt
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip3 install transformers tqdm numpy scikit-learn scipy nltk sentencepiece
+RUN pip3 install --no-deps sentence-transformers
 WORKDIR "/data"

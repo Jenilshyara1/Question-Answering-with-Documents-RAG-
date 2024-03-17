@@ -1,4 +1,3 @@
 langchain
 flask
-faiss-cpu
 gunicorn
