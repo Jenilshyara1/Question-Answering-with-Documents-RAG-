@@ -63,9 +63,11 @@
 #     st.session_state.messages.append({"role": "assistant", "content": full_response})
 
 # import  requests
-# assistant_response = requests.post('http://127.0.0.1:5000/chat_response',json={'text':"what is cheese making?"})
-# print(assistant_response.json())
+# assistant_response = requests.post('http://127.0.0.1:5000/chat_response',json={'text':"what is cheese making?",'context':'Cheesemaking is the process of turning milk into a semisolid mass. This is done by using a coagulating agent, such as rennet, acid, heat, or a combination of these'})
+# # print(assistant_response.json())
 # print(assistant_response.text)
 # print(type(assistant_response.text))
 
 
+import os
+print(os.environ['blas'])

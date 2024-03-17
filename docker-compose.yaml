@@ -8,7 +8,7 @@ services:
     tty: true
     working_dir: /data
     command: >
-      streamlit run app.py --server.port=8080 --server.address=0.0.0.0
+      streamlit run src/streamlit_app/app.py --server.port=8080 --server.address=0.0.0.0
     ports:
       - 8080:8080
     volumes:
@@ -25,7 +25,7 @@ services:
     tty: true
     working_dir: /data
     command: >
-      gunicorn  --bind 0.0.0.0:5858  flask_chat:app --timeout 0
+      gunicorn  --bind 0.0.0.0:5858 --chdir src/flask_app flask_chat:app --worker-class uvicorn.workers.UvicornWorker --timeout 0
     ports:
       - 5858:5858
     volumes:
