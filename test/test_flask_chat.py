@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
-from mistral_model import Chatbot
+from src.flask_app.mistral_model import Chatbot
 import pytest
-from flask_chat import app
+from src.flask_app.flask_chat import app
 
 client = TestClient(app)
 bot = Chatbot()
