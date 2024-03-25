@@ -1,5 +1,5 @@
 from fastapi.testclient import TestClient
-from flask_app import app
+from api import app
 client = TestClient(app)
 
 def test_chat_response():

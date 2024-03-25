@@ -17,7 +17,6 @@ services:
       - flask-app
     networks:
       - chatnet
-    mem_limit: 512M
   flask-app:
     build:
       context: .
@@ -25,7 +24,7 @@ services:
     tty: true
     working_dir: /data
     command: >
-      gunicorn  --bind 0.0.0.0:5858 flask_app:app --worker-class uvicorn.workers.UvicornWorker --timeout 0
+      gunicorn  --bind 0.0.0.0:5858 api:app --worker-class uvicorn.workers.UvicornWorker --timeout 0
     ports:
       - 5858:5858
     volumes:

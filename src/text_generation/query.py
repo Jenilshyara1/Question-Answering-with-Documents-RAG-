@@ -12,29 +12,34 @@ class Query:
             model_kwargs=self.model_kwargs,  # Pass the model configuration options
             encode_kwargs=self.encode_kwargs,  # Pass the encoding options
         )
-    def load_dataset(self, uploaded_file):
-        documents = [uploaded_file.read().decode()]
-        return documents
+        self.db = None
 
     def chunk_data(self, documents):
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=500, chunk_overlap=150
         )
-        docs = text_splitter.create_documents(documents)
+        docs = text_splitter.create_documents([documents])
         return docs
 
-    def create_embeddings(self,uploaded_file,save_embeddings = False):
-        documents = self.load_dataset(uploaded_file)
-        docs = self.chunk_data(documents)
+    def create_embeddings(self,text,save_embeddings = False):
+        docs = self.chunk_data(text)
         db = FAISS.from_documents(docs, self.embeddings)
         if save_embeddings:
             db.save_local(folder_path = 'emb')
-        return db
-
+        self.db = db
+    
+    def query_search(self,db,prompt):
+        similar_doc = db.similarity_search(prompt, k=1)
+        context = similar_doc[0].page_content
+        return context
 if __name__ == '__main__':
     q = Query()
-    db = q.create_embeddings('stats.txt')
-# question = "What is cheesemaking?"
-# searchDocs = db.similarity_search(question)
+    with open('stats.txt','r') as f:
+        text = f.read()
+    q.create_embeddings(text)
+    # print(db)
+    question = "What is probabilty?"
+    searchDocs = q.query_search(q.db,question)
+    print(searchDocs)
 # print(searchDocs[0].page_content)
 # retriever = searchDocs.as_retriever()

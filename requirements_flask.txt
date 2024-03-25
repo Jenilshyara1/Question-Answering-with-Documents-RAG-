@@ -1,4 +1,5 @@
 langchain
 langchain-community
+faiss-cpu
 flask
 gunicorn

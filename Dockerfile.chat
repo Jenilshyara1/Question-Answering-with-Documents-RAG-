@@ -20,5 +20,5 @@ RUN pip install -r requirements_flask.txt
 RUN pip3 install transformers tqdm numpy scikit-learn scipy nltk sentencepiece
 RUN pip3 install --no-deps sentence-transformers
 RUN pip3 install fastapi uvicorn
-# RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
 WORKDIR "/data"
