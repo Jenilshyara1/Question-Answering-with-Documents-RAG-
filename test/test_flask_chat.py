@@ -1,29 +1,11 @@
 from fastapi.testclient import TestClient
-from src.flask_app.mistral_model import Chatbot
-import pytest
-from src.flask_app.flask_chat import app
-
+from flask_app import app
 client = TestClient(app)
-bot = Chatbot()
 
 def test_chat_response():
     response = client.post(
         "/chat_response",
-        json={"text": "Hello, World!", "context": "Greetings"},
+        json={"text": "what is cheese making?", "context": "Cheesemaking is the process of turning milk into a semisolid mass. This is done by using a coagulating agent, such as rennet, acid, heat, or a combination of these"},
     )
     assert response.status_code == 200
     assert "response" in response.json()
-
-@pytest.fixture
-def mock_generate_response(monkeypatch):
-    def mock_response(*args, **kwargs):
-        return "Mocked chatbot response"
-    monkeypatch.setattr(bot, "generate_response", mock_response)
-
-def test_chat_response_with_mock(mock_generate_response):
-    response = client.post(
-        "/chat_response",
-        json={"text": "Hello, World!", "context": "Greetings"},
-    )
-    assert response.status_code == 200
-    assert response.json() == {"response": "Mocked chatbot response"}

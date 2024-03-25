@@ -1,7 +1,7 @@
 import streamlit as st
 import time
 import requests
-from query import Query
+from src.text_generation.query import Query
 query = Query()
 
 def query_search(db,prompt):
@@ -52,26 +52,3 @@ if uploaded_file is not None:
                 print(e)
         # Add assistant response to chat history
         st.session_state.messages.append({"role": "assistant", "content": full_response})
-    # if prompt := st.chat_input("What is up?"):
-    #     context = query_search(db,prompt)
-    #     print(context)
-    # # Add user message to chat history
-    #     st.session_state.messages.append({"role": "user", "content": prompt})
-    #     # Display user message in chat message container
-    #     with st.chat_message("user"):
-    #         st.markdown(prompt)
-
-    #     # Display assistant response in chat message container
-    #     with st.chat_message("assistant"):
-    #         message_placeholder = st.empty()
-    #         full_response = ""
-    #         assistant_response = requests.post('http://127.0.0.1:5858/chat_response',json={'text':prompt,'context':context}).json()['response']
-    #         # Simulate stream of response with milliseconds delay
-    #         for chunk in assistant_response.split():
-    #             full_response += chunk + " "
-    #             time.sleep(0.05)
-    #             # Add a blinking cursor to simulate typing
-    #             message_placeholder.markdown(full_response + "▌")
-    #         message_placeholder.markdown(full_response)
-    #     # Add assistant response to chat history
-    #     st.session_state.messages.append({"role": "assistant", "content": full_response})
