@@ -7,6 +7,12 @@
 
 - This repository contains the implementation of a Retrieval-Augmented Generation (RAG) pipeline using LangChain, Streamlit, FAISS Vector Database, and HuggingFace Embedding.This combination of technologies allows us to tackle complex information retrieval and natural language understanding tasks.
 
+
+### Run chatbot:
+```bash
+docker-compose up
+```
+
 ### Key Components
 
 - [LangChain](https://python.langchain.com/docs/get_started/introducti) : LangChain is a framework for developing applications powered by language models.
