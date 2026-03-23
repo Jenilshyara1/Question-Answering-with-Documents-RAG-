@@ -1,6 +1,117 @@
 version: "3"
 
 services:
+  qdrant:
+    image: qdrant/qdrant:v1.9.2
+    ports:
+      - 6333:6333
+      - 6334:6334
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    networks:
+      - chatnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  embedding-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.embedding
+      args:
+        DEVICE: ${EMBEDDING_DEVICE:-cpu}
+    command: uvicorn embedding_service.main:app --host 0.0.0.0 --port 7000
+    ports:
+      - 7000:7000
+    networks:
+      - chatnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7000/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    # Uncomment the block below when EMBEDDING_DEVICE=gpu
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  glm-ocr:
+    image: vllm/vllm-openai:nightly
+    command: >
+      --model zai-org/GLM-OCR
+      --allowed-local-media-path /
+      --port 8080
+    ports:
+      - 8080:8080
+    volumes:
+      - glm_ocr_cache:/root/.cache/huggingface
+    networks:
+      - chatnet
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 15s
+      retries: 10
+      start_period: 180s
+    # Uncomment the block below when a GPU is available (recommended for performance)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  pdf-parser:
+    build:
+      context: .
+      dockerfile: Dockerfile.pdf-parser
+    command: uvicorn pdf_parser.main:app --host 0.0.0.0 --port 7001
+    ports:
+      - 7001:7001
+    env_file: .env
+    networks:
+      - chatnet
+    depends_on:
+      glm-ocr:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7001/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 15s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.chat
+    tty: true
+    working_dir: /data
+    command: >
+      gunicorn --bind 0.0.0.0:5858 api:app --worker-class uvicorn.workers.UvicornWorker --timeout 0
+    ports:
+      - 5858:5858
+    volumes:
+      - .:/data
+    env_file: .env
+    depends_on:
+      qdrant:
+        condition: service_healthy
+      embedding-service:
+        condition: service_healthy
+      pdf-parser:
+        condition: service_healthy
+    networks:
+      - chatnet
+
   chatbot:
     build:
       context: .
@@ -13,32 +124,16 @@ services:
       - 8000:8080
     volumes:
       - .:/data
+    env_file: .env
     depends_on:
-      - flask-app
+      - api
     networks:
       - chatnet
-  flask-app:
-    build:
-      context: .
-      dockerfile: Dockerfile.chat
-    tty: true
-    working_dir: /data
-    command: >
-      gunicorn  --bind 0.0.0.0:5858 api:app --worker-class uvicorn.workers.UvicornWorker --timeout 0
-    ports:
-      - 5858:5858
-    volumes:
-      - .:/data
-    networks:
-      - chatnet
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
 
 networks:
   chatnet:
     driver: bridge
+
+volumes:
+  qdrant_storage:
+  glm_ocr_cache:

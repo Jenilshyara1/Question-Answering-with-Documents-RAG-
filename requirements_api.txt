@@ -1,0 +1,12 @@
+langchain
+langchain-community
+langchain-openai
+langchain-qdrant
+qdrant-client
+flashrank
+fastapi
+uvicorn[standard]
+gunicorn
+langfuse
+python-dotenv
+httpx

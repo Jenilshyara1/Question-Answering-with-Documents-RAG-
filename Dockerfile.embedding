@@ -1,0 +1,25 @@
+ARG DEVICE=cpu
+
+# ── CPU base: torch from the CPU-only wheel index (~800 MB vs ~2 GB for CUDA) ─
+FROM python:3.11-slim-bookworm AS base-cpu
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# ── GPU base: standard torch wheel with CUDA support ──────────────────────────
+FROM python:3.11-slim-bookworm AS base-gpu
+RUN pip install --no-cache-dir torch
+
+# ── Final stage: selected by DEVICE build arg ─────────────────────────────────
+FROM base-${DEVICE} AS final
+
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+COPY requirements_embedding.txt requirements_embedding.txt
+RUN pip install --no-cache-dir -r requirements_embedding.txt
+
+# Bake model weights into image so container startup is instant
+RUN python -c "from langchain_community.embeddings import HuggingFaceEmbeddings; HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-l6-v2')"
+RUN python -c "from fastembed.sparse.bm25 import Bm25; Bm25('Qdrant/bm25')"
+
+COPY embedding_service/ embedding_service/
+
+WORKDIR "/data"

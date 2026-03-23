@@ -1,0 +1,7 @@
+sentence-transformers
+fastembed
+fastapi
+uvicorn[standard]
+langchain-community
+# torch is intentionally absent — installed in the Dockerfile base stage
+# so the CPU vs GPU wheel is selected before pip resolves sentence-transformers deps

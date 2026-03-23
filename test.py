@@ -1,73 +1,43 @@
-# import time
-# from langchain.llms import LlamaCpp
-# from langchain.prompts import PromptTemplate
-# from langchain.chains import LLMChain
-# from query import Query
-# import streamlit as st
-# import time
-# q = Query()
+from transformers import Qwen2VLForConditionalGeneration, AutoTokenizer, AutoProcessor
+from qwen_vl_utils import process_vision_info
 
-# template = """<s>[INST] <<SYS>>
-#         You are an assistant for question-answering tasks.
-#         If you don't know the answer, just say that you don't know and return answer only nothing more.<</SYS>>
-#         Use the bellow pieces of context to answer the question, if answer is not in context give appropriate answer by your own.
-#         [context] : {context}
-#         answer the question: {question}
-#         Answer:
-#         [/INST]"""
-# vectorstore = q.main(load_embeddings=True)
-# llm = LlamaCpp(
-#         model_path=r"C:\Users\jenil\Downloads\llama-2-7b-chat.Q4_K_M.gguf",
-#         temperature=0.75,
-#         max_tokens=2000,
-#         top_p=1,
-#         verbose=True,  # Verbose is required to pass to the callback manager
-#         n_ctx=2000,
-#         n_threads = 12
-#                         )
-# chain = LLMChain(llm=llm, prompt=PromptTemplate(template=template, input_variables=["documents"]))
+# default: Load the model on the available device(s)
+model = Qwen2VLForConditionalGeneration.from_pretrained(
+    "Qwen/Qwen2-VL-2B-Instruct-GPTQ-Int4", torch_dtype="auto", device_map="auto"
+)
+processor = AutoProcessor.from_pretrained("Qwen/Qwen2-VL-2B-Instruct-GPTQ-Int4")
 
-# st.title("Chatbot")
-# # Initialize chat history
-# if "messages" not in st.session_state:
-#     st.session_state.messages = []
+messages = [
+    {
+        "role": "user",
+        "content": [
+            {
+                "type": "image",
+                "image": "https://qianwen-res.oss-cn-beijing.aliyuncs.com/Qwen-VL/assets/demo.jpeg",
+            },
+            {"type": "text", "text": "Describe this image."},
+        ],
+    }
+]
+text = processor.apply_chat_template(
+    messages, tokenize=False, add_generation_prompt=True
+)
+image_inputs, video_inputs = process_vision_info(messages)
+inputs = processor(
+    text=[text],
+    images=image_inputs,
+    videos=video_inputs,
+    padding=True,
+    return_tensors="pt",
+)
+inputs = inputs.to("cuda")
 
-# # Display chat messages from history on app rerun
-# for message in st.session_state.messages:
-#     with st.chat_message(message["role"]):
-#         st.markdown(message["content"])
-
-# # Accept user input
-# if prompt := st.chat_input("What is up?"):
-# # Add user message to chat history
-#     st.session_state.messages.append({"role": "user", "content": prompt})
-#     # Display user message in chat message container
-#     with st.chat_message("user"):
-#         st.markdown(prompt)
-
-#     # Display assistant response in chat message container
-#     with st.chat_message("assistant"):
-#         message_placeholder = st.empty()
-#         full_response = ""
-#         similar_doc = vectorstore.similarity_search(prompt, k=1)
-#         context = similar_doc[0].page_content
-#         assistant_response = chain.run({"context": context, "question": prompt})
-#         # Simulate stream of response with milliseconds delay
-#         for chunk in assistant_response.split():
-#             full_response += chunk + " "
-#             time.sleep(0.05)
-#             # Add a blinking cursor to simulate typing
-#             message_placeholder.markdown(full_response + "▌")
-#         message_placeholder.markdown(full_response)
-#     # Add assistant response to chat history
-#     st.session_state.messages.append({"role": "assistant", "content": full_response})
-
-# import  requests
-# assistant_response = requests.post('http://127.0.0.1:5000/chat_response',json={'text':"what is cheese making?",'context':'Cheesemaking is the process of turning milk into a semisolid mass. This is done by using a coagulating agent, such as rennet, acid, heat, or a combination of these'})
-# # print(assistant_response.json())
-# print(assistant_response.text)
-# print(type(assistant_response.text))
-
-
-import os
-print(os.environ['blas'])
+# Inference: Generation of the output
+generated_ids = model.generate(**inputs, max_new_tokens=128)
+generated_ids_trimmed = [
+    out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
+]
+output_text = processor.batch_decode(
+    generated_ids_trimmed, skip_special_tokens=True, clean_up_tokenization_spaces=False
+)
+print(output_text)
